@@ -70,6 +70,4 @@ public class FrontServlet extends HttpServlet {
             e.printStackTrace();
         }
     }
-
-
 }
