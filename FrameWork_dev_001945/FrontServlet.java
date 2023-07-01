@@ -58,6 +58,11 @@ public class FrontServlet extends HttpServlet {
     
                 if (retour instanceof ModelView) {
                     ModelView cView = (ModelView) retour;
+                    HashMap<String, Object> dataValue = new HashMap<>();
+                    dataValue = cView.getData();
+                    for (Map.Entry<String, Object> entrer : cView.getData().entrySet()) {
+                        request.setAttribute(entrer.getKey(), entrer.getValue());
+                    }
                     request.getRequestDispatcher(cView.getUrl()).forward(request, response);
                 }
             }
