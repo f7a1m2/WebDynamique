@@ -2,17 +2,17 @@ package etu1945.framework.servlet;
 
 import java.text.*;
 import java.util.*;
-import java.beans.MethodDescriptor;
 import java.io.File;
 import java.net.URL;
-import java.net.URLConnection;
 import java.net.URI;
 import java.lang.Package;
 import jakarta.servlet.*;
 import java.lang.reflect.*;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLConnection;
 import jakarta.servlet.http.*;
+import java.beans.MethodDescriptor;
 import java.net.URISyntaxException;
 
 import etu1945.framework.*;
@@ -84,7 +84,29 @@ public class FrontServlet extends HttpServlet {
                     }
                 }
 
-                Object[] parameters = null;
+                Parameter[] tableau = meth.getParameters();
+                Object[] parameters = new Object[tableau.length];
+                Enumeration<String> parameterName = request.getParameterNames();
+
+                for (int i = 0; i < tableau.length ; i++) {
+                    if (tableau[i].isAnnotationPresent(Parametre.class )) { 
+                        Parametre param = tableau[i].getAnnotation(Parametre.class);
+                        String fieldName = param.note();
+                        
+                        while (parameterName.hasMoreElements()) {
+                            String paramName = parameterName.nextElement();
+                            if (paramName.equals(fieldName)) {
+                                String cloud = request.getParameter(paramName);
+
+                                Object saver= tableau[i].getType().getConstructor(String.class).newInstance(cloud);
+                                parameters[i]= saver;
+                                // out.println("1");
+                                // out.println(saver);
+                            }
+                        }                        
+                    }
+                }
+
                 Object retour = meth.invoke(myClass, parameters);
                 
                 if (retour instanceof ModelView) {
